@@ -1,0 +1,17 @@
+{
+  "name": "genshindailygetter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "author": "manju",
+  "license": "ISC",
+  "dependencies": {
+    "genshin-kit.js": "^2.0.0",
+    "log4js": "^6.7.0",
+    "node-notifier": "^10.0.1",
+    "properties-reader": "^2.2.0"
+  }
+}
