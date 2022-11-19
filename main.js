@@ -68,7 +68,7 @@ client.dailyReward.fetchRewardInfo({
                     message: "デイリー報酬を受け取りました。",
                     icon: path.join(__dirname, "/src/img/gg.png")
                 })
-            } else {
+            } else { // { status: 'Already claimed', code: -5003, rewards: null }
                 notifier.notify({
                     title: "Genshin Daily Getter",
                     message: "デイリー報酬を受け取れませんでした。",
