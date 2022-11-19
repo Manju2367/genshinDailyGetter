@@ -77,8 +77,22 @@ client.dailyReward.fetchRewardInfo({
             }
             logger.info(c) // log:受け取り情報
 
-        }).catch(error => logger.error(error)) // log:チェックインエラー
+        }).catch(error => {
+            notifier.notify({
+                title: "Genshin Daily Getter",
+                message: "エラー",
+                icon: path.join(__dirname, "/src/img/gg.png")
+            })
+            logger.error(error)
+        }) // log:チェックインエラー
     }
     logger.info(result) // log:デイリー報酬の情報
 
-}).catch(error => logger.error(error)) // log:デイリー報酬の情報の取得エラー
+}).catch(error => {
+    notifier.notify({
+        title: "Genshin Daily Getter",
+        message: "エラー",
+        icon: path.join(__dirname, "/src/img/gg.png")
+    })
+    logger.error(error) // log:デイリー報酬の情報の取得エラー
+})
