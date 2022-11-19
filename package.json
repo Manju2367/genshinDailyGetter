@@ -13,5 +13,12 @@
     "log4js": "^6.7.0",
     "node-notifier": "^10.0.1",
     "properties-reader": "^2.2.0"
+  },
+  "bugs": {
+    "url": "https://github.com/Manju2367/genshinDailyGetter/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Manju2367/genshinDailyGetter.git"
   }
 }
