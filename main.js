@@ -5,6 +5,8 @@ const propertiesReader = require("properties-reader")
 const notifier = require("node-notifier")
 const path = require("path")
 const log4js = require("log4js")
+const { existsSync, mkdirSync, writeFileSync } = require("fs")
+const request = require("request")
 
 const properties = propertiesReader("./app.ini")
 const logger = log4js.getLogger("system")
@@ -13,6 +15,7 @@ logger.level = "debug"
 const LTUID = properties.get("LTUID")
 const LTOKEN = properties.get("LTOKEN")
 const UID = properties.get("UID")
+const iconDir = "./src/img"
 
 
 
@@ -61,16 +64,33 @@ client.dailyReward.fetchRewardInfo({
 
             // 報酬が空ではない?
             if(c.rewards !== null) { // { status: 'success', code: 0, rewards: { icon: ..., name: ..., count: ... } }
+                const { icon, name, count } = c.rewards
+
+                // アイコンがなければダウンロード
+                if(!existsSync(`${ iconDir }/${ name }.png`)) {
+                    request(icon, {
+                        method: "GET",
+                        encoding: null
+                    }, (error, response, body) => {
+                        if(!error && response.statusCode === 200) {
+                            if(!existsSync(iconDir)) mkdirSync(iconDir)
+                            writeFileSync(`${ iconDir }/${ name }.png`, body, "binary")
+                        } else {
+                            logger.error(error) // log:リクエストエラー
+                        }
+                    })
+                }
+
                 // 受け取り通知
                 notifier.notify({
                     title: "Genshin Daily Getter",
-                    message: `デイリー報酬を受け取りました。\n${ c.rewards.name }x${ c.rewards.count }`,
-                    icon: path.join(__dirname, "/src/img/gg.png")
+                    message: `デイリー報酬を受け取りました。\n${ name }x${ count }`,
+                    icon: path.join(__dirname, `/src/img/${ name }.png`)
                 })
             } else { // { status: 'Already claimed', code: -5003, rewards: null }
                 notifier.notify({
                     title: "Genshin Daily Getter",
-                    message: "デイリー報酬を受け取れませんでした。",
+                    message: "デイリー報酬の受け取りに失敗しました。(-1)",
                     icon: path.join(__dirname, "/src/img/gg.png")
                 })
             }
@@ -79,7 +99,7 @@ client.dailyReward.fetchRewardInfo({
         }).catch(error => {
             notifier.notify({
                 title: "Genshin Daily Getter",
-                message: "チェックインエラー",
+                message: "デイリー報酬の受け取りに失敗しました。(-2)",
                 icon: path.join(__dirname, "/src/img/gg.png")
             })
             logger.error(error) // log:チェックインエラー
@@ -90,7 +110,7 @@ client.dailyReward.fetchRewardInfo({
 }).catch(error => {
     notifier.notify({
         title: "Genshin Daily Getter",
-        message: "フェッチエラー",
+        message: "デイリー報酬の受け取りに失敗しました。(-3)",
         icon: path.join(__dirname, "/src/img/gg.png")
     })
     logger.error(error) // log:デイリー報酬の情報の取得エラー
