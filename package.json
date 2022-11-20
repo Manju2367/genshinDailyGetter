@@ -1,6 +1,6 @@
 {
   "name": "genshindailygetter",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "HoYoLABの原神デイリー報酬を自動受け取りにするツール。",
   "main": "main.js",
   "scripts": {
