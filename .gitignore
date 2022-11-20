@@ -1,4 +1,5 @@
 node_modules/
+src/item/
 app.ini
 system.log
 genshinDailyGetter.lnk
