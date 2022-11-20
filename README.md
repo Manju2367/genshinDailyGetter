@@ -27,6 +27,7 @@
    ```
    <br>
 4. app.ini にユーザー情報を入力する。<br>
+   app_default.iniをapp.iniに名前変更する。<br>
    [HoYoLAB](https://www.hoyolab.com/home)にアクセスし、ログインしておく。<br>
    HoYoLAB を開いたブラウザで **F12**、もしくは **Ctrl + Shift + i** を入力して開発者ツールを開く（デフォルトは英語表記）。<br>
    アプリケーションタブから Cookie -> https\://www.hoyolab.com を開き、**ltuid** と **ltoken** の値をapp.iniファイルの **LTUID** と**LTOKEN** にそれぞれコピペする。<br><br>
