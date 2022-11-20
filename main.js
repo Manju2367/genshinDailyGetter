@@ -40,7 +40,6 @@ log4js.configure({
 
 
 
-
 // デイリー報酬の情報をfetch
 client.dailyReward.fetchRewardInfo({
     language: Language.Japanese
@@ -61,11 +60,11 @@ client.dailyReward.fetchRewardInfo({
         }).then(c => {
 
             // 報酬が空ではない?
-            if(c.rewards !== null) {
+            if(c.rewards !== null) { // { status: 'success', code: 0, rewards: { icon: ..., name: ..., count: ... } }
                 // 受け取り通知
                 notifier.notify({
                     title: "Genshin Daily Getter",
-                    message: "デイリー報酬を受け取りました。",
+                    message: `デイリー報酬を受け取りました。\n${ c.rewards.name }x${ c.rewards.count }`,
                     icon: path.join(__dirname, "/src/img/gg.png")
                 })
             } else { // { status: 'Already claimed', code: -5003, rewards: null }
@@ -80,18 +79,18 @@ client.dailyReward.fetchRewardInfo({
         }).catch(error => {
             notifier.notify({
                 title: "Genshin Daily Getter",
-                message: "エラー",
+                message: "チェックインエラー",
                 icon: path.join(__dirname, "/src/img/gg.png")
             })
-            logger.error(error)
-        }) // log:チェックインエラー
+            logger.error(error) // log:チェックインエラー
+        })
     }
     logger.info(result) // log:デイリー報酬の情報
 
 }).catch(error => {
     notifier.notify({
         title: "Genshin Daily Getter",
-        message: "エラー",
+        message: "フェッチエラー",
         icon: path.join(__dirname, "/src/img/gg.png")
     })
     logger.error(error) // log:デイリー報酬の情報の取得エラー
