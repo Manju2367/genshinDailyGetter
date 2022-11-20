@@ -4,7 +4,7 @@
   "description": "HoYoLABの原神デイリー報酬を自動受け取りにするツール。",
   "main": "main.js",
   "scripts": {
-    "test": "electron .",
+    "test": "node main.js",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make"

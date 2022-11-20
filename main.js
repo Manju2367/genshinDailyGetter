@@ -1,6 +1,5 @@
 "use strict"
 
-const { app } = require("electron")
 const { Client, Language } = require("genshin-kit.js")
 const propertiesReader = require("properties-reader")
 const notifier = require("node-notifier")
@@ -9,14 +8,14 @@ const log4js = require("log4js")
 const { existsSync, mkdirSync, writeFileSync } = require("fs")
 const request = require("request")
 
-const properties = propertiesReader("./app.ini")
+const properties = propertiesReader(path.join(__dirname, "/app.ini"))
 const logger = log4js.getLogger("system")
 logger.level = "debug"
 
 const LTUID = properties.get("LTUID")
 const LTOKEN = properties.get("LTOKEN")
 const UID = properties.get("UID")
-const iconDir = "./src/item"
+const iconDir = path.join(__dirname, "/src/item")
 
 
 
@@ -116,7 +115,3 @@ client.dailyReward.fetchRewardInfo({
     })
     logger.error(error) // log:デイリー報酬の情報の取得エラー
 })
-
-
-
-app.quit()
