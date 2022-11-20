@@ -8,14 +8,14 @@ const log4js = require("log4js")
 const { existsSync, mkdirSync, writeFileSync } = require("fs")
 const request = require("request")
 
-const properties = propertiesReader(path.join(__dirname, "/app.ini"))
+const properties = propertiesReader("app.ini")
 const logger = log4js.getLogger("system")
 logger.level = "debug"
 
 const LTUID = properties.get("LTUID")
 const LTOKEN = properties.get("LTOKEN")
 const UID = properties.get("UID")
-const iconDir = path.join(__dirname, "/src/item")
+const iconDir = "src/item"
 
 
 
