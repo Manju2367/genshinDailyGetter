@@ -4,7 +4,7 @@
 
 1. アプリをダウンロードする。<br>
    下のリンクからzipをダウンロードして解凍し、適当なフォルダに置いておく。<br>
-   [genshinDailyGetter.zip](https://drive.google.com/file/d/1EFTFlTcTX4a9prOBsqq-NrMzY4WM5L6H/view?usp=share_link)
+   [genshinDailyGetter.zip](https://drive.google.com/file/d/1EG7RTzwfFw8spS5PTP5Bt1YYhG6Voubf/view?usp=share_link)
    <br><br>
 2. app.ini にユーザー情報を入力する。<br>
    [HoYoLAB](https://www.hoyolab.com/home)にアクセスし、ログインしておく。<br>
