@@ -21,5 +21,8 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Manju2367/genshinDailyGetter.git"
+  },
+  "devDependencies": {
+    "electron": "^21.3.0"
   }
 }
