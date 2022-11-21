@@ -29,6 +29,7 @@ log4js.configure({
         }
     }
 })
+notifier.on("timeout", () => app.quit())
 
 const LTUID = properties.get("LTUID")
 const LTOKEN = properties.get("LTOKEN")
