@@ -43,75 +43,105 @@ log4js.configure({
 
 
 
-// デイリー報酬の情報をfetch
-client.dailyReward.fetchRewardInfo({
-    language: Language.Japanese
-}).then(result => {
+client.dailyReward.fetchRewardInfo().then(async result => { // fetch reward info
 
-    // デイリー報酬を受け取ったか?
-    if(result.is_sign) {
-        // 受け取り済み通知
-        notifier.notify({
-            title: "Genshin Daily Getter",
-            message: "今日のデイリー報酬は受け取り済みです。",
-            icon: path.join(__dirname, "/src/img/gg.png")
-        })
+    const { is_sign, total_sign_day } = result
+    if(!is_sign) {
+        return await client.dailyReward.fetchDayReward(total_sign_day + 1)
     } else {
-        // チェックインfetch
-        client.dailyReward.checkIn({
-            language: Language.Japanese
-        }).then(c => {
+        throw new Error("received")
+    }
 
-            // 報酬が空ではない?
-            if(c.rewards !== null) { // { status: 'success', code: 0, rewards: { icon: ..., name: ..., count: ... } }
-                const { icon, name, count } = c.rewards
+}).then(async result => { // succeed fetch reward info
 
-                // アイコンがなければダウンロード
-                if(!existsSync(`${ iconDir }/${ name }.png`)) {
-                    request(icon, {
-                        method: "GET",
-                        encoding: null
-                    }, (error, response, body) => {
-                        if(!error && response.statusCode === 200) {
-                            if(!existsSync(iconDir)) mkdirSync(iconDir)
-                            writeFileSync(`${ iconDir }/${ name }.png`, body, "binary")
-                        } else {
-                            logger.error(error) // log:リクエストエラー
-                        }
-                    })
-                }
+    let ci = await client.dailyReward.checkIn()
+    if(ci.code === 0) {
+        ci.rewards = result
+        return ci
+    } else if(ci.code === -5003) {
+        throw new Error("already_claimed")
+    } else {
+        throw new Error("failed_check_in")
+    }
 
-                // 受け取り通知
-                notifier.notify({
-                    title: "Genshin Daily Getter",
-                    message: `デイリー報酬を受け取りました。\n${ name }x${ count }`,
-                    icon: path.join(__dirname, `/src/item/${ name }.png`)
-                })
-            } else { // { status: 'Already claimed', code: -5003, rewards: null }
-                notifier.notify({
-                    title: "Genshin Daily Getter",
-                    message: "デイリー報酬の受け取りに失敗しました。(-1)",
-                    icon: path.join(__dirname, "/src/img/gg.png")
+}).then(async result => { // succeed check in
+
+        const { icon, name, count } = result.rewards
+
+        new Promise((resolve, reject) => {
+
+            // download icon if it does not exist
+            if(!existsSync(`${ iconDir }/${ name }.png`)) {
+                request(icon, {
+                    method: "GET",
+                    encoding: null
+                }, (error, response, body) => {
+                    if(!error && response.statusCode === 200) {
+                        if(!existsSync(iconDir)) mkdirSync(iconDir)
+                        writeFileSync(`${ iconDir }/${ name }.png`, body, "binary")
+                        resolve()
+                    } else {
+                        reject(error)
+                    }
                 })
             }
-            logger.info(c) // log:受け取り情報
 
-        }).catch(error => {
+        }).then(() => {
+
+            // succeed receive notification
             notifier.notify({
                 title: "Genshin Daily Getter",
-                message: "デイリー報酬の受け取りに失敗しました。(-2)",
+                message: `デイリー報酬を受け取りました。\n${ name }x${ count }`,
+                icon: path.join(__dirname, `/src/item/${ name }.png`)
+            })
+            logger.info(result) // log:result object
+
+        }).catch(error => {
+
+            logger.error(error) // log:request error
+
+        })
+    
+}).catch(
+    /**
+     * 
+     * @param {Error} error 
+     */
+    error => {
+
+    switch(error.message) {
+        case "received": // received notification
+            notifier.notify({
+                title: "Genshin Daily Getter",
+                message: "今日のデイリー報酬は受け取り済みです。",
                 icon: path.join(__dirname, "/src/img/gg.png")
             })
-            logger.error(error) // log:チェックインエラー
-        })
-    }
-    logger.info(result) // log:デイリー報酬の情報
+            break
 
-}).catch(error => {
-    notifier.notify({
-        title: "Genshin Daily Getter",
-        message: "デイリー報酬の受け取りに失敗しました。(-3)",
-        icon: path.join(__dirname, "/src/img/gg.png")
-    })
-    logger.error(error) // log:デイリー報酬の情報の取得エラー
+        case "already_claimed": // already claimed notification
+            notifier.notify({
+                title: "Genshin Daily Getter",
+                message: "今日のデイリー報酬は受け取り済みです。",
+                icon: path.join(__dirname, "/src/img/gg.png")
+            })
+            break
+
+        case "failed_check_in": // failed check in notification
+            notifier.notify({
+                title: "Genshin Daily Getter",
+                message: "チェックインに失敗しました。",
+                icon: path.join(__dirname, "/src/img/gg.png")
+            })
+            break
+
+        default: // failed receive notification
+            notifier.notify({
+                title: "Genshin Daily Getter",
+                message: "デイリー報酬の受け取りに失敗しました。",
+                icon: path.join(__dirname, "/src/img/gg.png")
+            })
+            break
+    }
+    logger.error(error.message)
+
 })
