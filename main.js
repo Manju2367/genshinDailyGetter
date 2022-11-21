@@ -8,24 +8,12 @@ const log4js = require("log4js")
 const { existsSync, mkdirSync, writeFileSync } = require("fs")
 const request = require("request")
 
-const properties = propertiesReader("app.ini")
-const logger = log4js.getLogger("system")
-logger.level = "debug"
-
-const LTUID = properties.get("LTUID")
-const LTOKEN = properties.get("LTOKEN")
-const UID = properties.get("UID")
-const iconDir = "src/item"
-
-
-
-// login
 const client = new Client({
     language: Language.Japanese
 })
-client.login(LTUID, LTOKEN)
-
-// logger init
+const properties = propertiesReader("app.ini")
+const logger = log4js.getLogger("system")
+logger.level = "debug"
 log4js.configure({
     appenders: {
         system: {
@@ -41,11 +29,20 @@ log4js.configure({
     }
 })
 
+const LTUID = properties.get("LTUID")
+const LTOKEN = properties.get("LTOKEN")
+const UID = properties.get("UID")
+const iconDir = "src/item"
 
+
+
+// login
+client.login(LTUID, LTOKEN)
 
 client.dailyReward.fetchRewardInfo().then(async result => { // fetch reward info
 
     const { is_sign, total_sign_day } = result
+
     if(!is_sign) {
         return await client.dailyReward.fetchDayReward(total_sign_day + 1)
     } else {
@@ -55,6 +52,7 @@ client.dailyReward.fetchRewardInfo().then(async result => { // fetch reward info
 }).then(async result => { // succeed fetch reward info
 
     let ci = await client.dailyReward.checkIn()
+
     if(ci.code === 0) {
         ci.rewards = result
         return ci
@@ -76,6 +74,7 @@ client.dailyReward.fetchRewardInfo().then(async result => { // fetch reward info
                     method: "GET",
                     encoding: null
                 }, (error, response, body) => {
+
                     if(!error && response.statusCode === 200) {
                         if(!existsSync(iconDir)) mkdirSync(iconDir)
                         writeFileSync(`${ iconDir }/${ name }.png`, body, "binary")
@@ -83,6 +82,7 @@ client.dailyReward.fetchRewardInfo().then(async result => { // fetch reward info
                     } else {
                         reject(error)
                     }
+
                 })
             }
 
@@ -142,6 +142,6 @@ client.dailyReward.fetchRewardInfo().then(async result => { // fetch reward info
             })
             break
     }
-    logger.error(error.message)
+    logger.error(error.message) // log:error message
 
 })
