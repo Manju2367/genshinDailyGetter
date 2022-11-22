@@ -42,7 +42,7 @@
    そこに作成したショートカットを移動する。<br><br>
 
 ## exeバージョン
-[こちら](https://github.com/Manju2367/genshinDailyGetter/tree/electron)のREADME.mdをご覧ください。
+[こちら](https://github.com/Manju2367/genshinDailyGetter/tree/electron#readme)のREADME.mdをご覧ください。
 
 ## バグ報告
 
