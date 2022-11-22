@@ -46,7 +46,7 @@ client.dailyReward.fetchRewardInfo().then(async result => { // fetch reward info
     if(!is_sign) {
         return await client.dailyReward.fetchDayReward(total_sign_day + 1)
     } else {
-        throw new Error("received")
+        throw new Error("already_claimed")
     }
 
 }).then(async result => { // succeed fetch reward info
@@ -88,13 +88,13 @@ client.dailyReward.fetchRewardInfo().then(async result => { // fetch reward info
 
         }).then(() => {
 
+            logger.info(result) // log:result object
             // succeed receive notification
             notifier.notify({
                 title: "Genshin Daily Getter",
                 message: `デイリー報酬を受け取りました。\n${ name }x${ count }`,
                 icon: path.join(__dirname, `/src/item/${ name }.png`)
             })
-            logger.info(result) // log:result object
 
         }).catch(error => {
 
@@ -109,14 +109,8 @@ client.dailyReward.fetchRewardInfo().then(async result => { // fetch reward info
      */
     error => {
 
+    logger.error(error.message) // log:error message
     switch(error.message) {
-        case "received": // received notification
-            notifier.notify({
-                title: "Genshin Daily Getter",
-                message: "今日のデイリー報酬は受け取り済みです。",
-                icon: path.join(__dirname, "/src/img/gg.png")
-            })
-            break
 
         case "already_claimed": // already claimed notification
             notifier.notify({
@@ -142,6 +136,5 @@ client.dailyReward.fetchRewardInfo().then(async result => { // fetch reward info
             })
             break
     }
-    logger.error(error.message) // log:error message
 
 })
