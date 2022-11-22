@@ -11,7 +11,7 @@ const request = require("request")
 const client = new Client({
     language: Language.Japanese
 })
-const properties = propertiesReader("app.ini")
+const properties = propertiesReader(path.join(__dirname, "/app.ini"))
 const logger = log4js.getLogger("system")
 logger.level = "debug"
 log4js.configure({
@@ -32,7 +32,7 @@ log4js.configure({
 const LTUID = properties.get("LTUID")
 const LTOKEN = properties.get("LTOKEN")
 const UID = properties.get("UID")
-const iconDir = "src/item"
+const srcDIr = path.join(__dirname, "/src")
 
 
 
@@ -69,15 +69,15 @@ client.dailyReward.fetchRewardInfo().then(async result => { // fetch reward info
         new Promise((resolve, reject) => {
 
             // download icon if it does not exist
-            if(!existsSync(`${ iconDir }/${ name }.png`)) {
+            if(!existsSync(path.join(srcDIr, `/item/${ name }.png`))) {
                 request(icon, {
                     method: "GET",
                     encoding: null
                 }, (error, response, body) => {
 
                     if(!error && response.statusCode === 200) {
-                        if(!existsSync(iconDir)) mkdirSync(iconDir)
-                        writeFileSync(`${ iconDir }/${ name }.png`, body, "binary")
+                        if(!existsSync(path.join(srcDIr, "/item"))) mkdirSync(path.join(srcDIr, "/item"))
+                        writeFileSync(path.join(srcDIr, `/item/${ name }.png`), body, "binary")
                         resolve()
                     } else {
                         reject(error)
@@ -93,7 +93,7 @@ client.dailyReward.fetchRewardInfo().then(async result => { // fetch reward info
             notifier.notify({
                 title: "Genshin Daily Getter",
                 message: `デイリー報酬を受け取りました。\n${ name }x${ count }`,
-                icon: path.join(__dirname, `/src/item/${ name }.png`)
+                icon: path.join(srcDIr, `/item/${ name }.png`)
             })
 
         }).catch(error => {
@@ -116,7 +116,7 @@ client.dailyReward.fetchRewardInfo().then(async result => { // fetch reward info
             notifier.notify({
                 title: "Genshin Daily Getter",
                 message: "今日のデイリー報酬は受け取り済みです。",
-                icon: path.join(__dirname, "/src/img/gg.png")
+                icon: path.join(srcDIr, "/img/gg.png")
             })
             break
 
@@ -124,7 +124,7 @@ client.dailyReward.fetchRewardInfo().then(async result => { // fetch reward info
             notifier.notify({
                 title: "Genshin Daily Getter",
                 message: "チェックインに失敗しました。",
-                icon: path.join(__dirname, "/src/img/gg.png")
+                icon: path.join(srcDIr, "/img/gg.png")
             })
             break
 
@@ -132,7 +132,7 @@ client.dailyReward.fetchRewardInfo().then(async result => { // fetch reward info
             notifier.notify({
                 title: "Genshin Daily Getter",
                 message: "デイリー報酬の受け取りに失敗しました。",
-                icon: path.join(__dirname, "/src/img/gg.png")
+                icon: path.join(srcDIr, "/img/gg.png")
             })
             break
     }
