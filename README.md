@@ -41,6 +41,9 @@
    エクスプローラーを開き、アドレスバーに「shell:startup」と入力すると、スタートアップのフォルダが開く。<br>
    そこに作成したショートカットを移動する。<br><br>
 
+## exeバージョン
+[こちら](https://github.com/Manju2367/genshinDailyGetter/tree/electron)のREADME.mdをご覧ください。
+
 ## バグ報告
 
 [こちら](https://github.com/Manju2367/genshinDailyGetter/issues)にお願いします。
