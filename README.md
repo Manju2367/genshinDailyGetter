@@ -21,6 +21,10 @@
    ![shell:startup](./src/tutorial/4.png "shell:startup")
    <br><br>
 
+## 利用規約
+
+当ツールを使用し、使用者に損害が生じた場合は一切の責任を負いかねます。
+
 ## バグ報告
 
 [こちら](https://github.com/Manju2367/genshinDailyGetter/issues)にお願いします。
